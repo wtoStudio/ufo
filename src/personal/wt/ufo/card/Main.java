@@ -9,7 +9,7 @@ import javax.swing.*;
 public class Main {
     public static void main(String[] args) throws Exception {
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-        MainFrame app = new MainFrame("斗地主");
+        MainFrame app = new MainFrame("关起门来斗地主");
         app.getGamePanel().requestFocus();
     }
 }
