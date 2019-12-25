@@ -3,6 +3,7 @@ package personal.wt.ufo.card.ui;
 import org.springframework.beans.BeanUtils;
 import personal.wt.ufo.card.entity.Card;
 import personal.wt.ufo.card.enums.PictureType;
+import personal.wt.ufo.card.enums.Side;
 import personal.wt.ufo.card.util.Util;
 import javax.swing.*;
 import java.awt.*;
@@ -106,6 +107,35 @@ public class GamePanel extends JPanel {
      */
     private int hiddenCardStartY;
 
+    //------------------------上下家牌位置参数START-------------------------
+
+    /**
+     * 牌距离两侧的宽度
+     */
+    private int sideCap;
+
+    /**
+     * 左侧开始位置X坐标
+     */
+    private int leftSideStartX;
+
+    /**
+     * 右侧开始位置X坐标
+     */
+    private int rightSideStartX;
+
+    /**
+     * 开始位置Y坐标
+     */
+    private int sideStartY;
+
+    /**
+     * 相邻两张牌的间距
+     */
+    private int sideCardCap;
+
+    //------------------------上下家牌位置参数END-------------------------
+
     private Map<String, Image> imageMap = new HashMap<>();
 
     private Map<String, Integer> charValueMap = new HashMap<>();
@@ -181,6 +211,13 @@ public class GamePanel extends JPanel {
         this.myCardStartPosY = this.height - (this.cardHeight + 30);
         this.myPlayedCardStartY = this.myCardStartPosY - (this.cardHeight + 30);
         this.hiddenCardStartY = 80;
+
+        //----上下家----
+        this.sideCap = 50;
+        this.leftSideStartX = this.sideCap;
+        this.rightSideStartX = this.width - (this.cardWidth + this.sideCap);
+        this.sideStartY = 80;
+        this.sideCardCap = this.cardHeight * 1 / 3;
     }
 
     private int calStartX(int count, int cap){
@@ -283,10 +320,10 @@ public class GamePanel extends JPanel {
         this.myCardStartPosX = calStartX(this.myCardList.size(), this.cardWidth/2);
         int clickedX = point.x;
         int clickedY = point.y;
-        if(clickedX>this.myCardStartPosX &&
-            clickedX<(this.myCardStartPosX + (this.myCardList.size()-1)*(this.cardWidth/2)+this.cardWidth)){
-            if(clickedY>this.myCardStartPosY && clickedY<this.myCardStartPosY +this.cardHeight){
-                int index = (clickedX - this.myCardStartPosX) / (this.cardWidth / 2);
+        if(clickedX > this.myCardStartPosX &&
+            clickedX < (this.myCardStartPosX + (this.myCardList.size()-1)*this.myCardCap+this.cardWidth)){
+            if(clickedY > this.myCardStartPosY && clickedY<this.myCardStartPosY +this.cardHeight){
+                int index = (clickedX - this.myCardStartPosX) / this.myCardCap;
                 return index;
             }
         }
@@ -303,6 +340,11 @@ public class GamePanel extends JPanel {
         paintCards(this.myCardList, this.myCardCap, this.myCardStartPosY, g);//this.cardWidth/2
         //绘制本家已打出的牌
         paintCards(this.myPlayedCardList, this.myPlayedCardCap, this.myPlayedCardStartY, g);//this.cardWidth/2
+
+        //绘制上家的牌
+        paintSideCards(prevCardList, this.sideCardCap, Side.PREV, g);
+        //绘制下家的牌
+        paintSideCards(nextCardList, this.sideCardCap, Side.NEXT, g);
     }
 
     /**
@@ -310,6 +352,29 @@ public class GamePanel extends JPanel {
      */
     private void paintBackground(Graphics g){
         g.drawImage(bg, 0, 0, this.width, this.height, 0, 0, bg.getWidth(null), bg.getHeight(null), null);
+    }
+
+    /**
+     * 绘制上家和下家的牌
+     * @param cardList 牌集合
+     * @param cap 每两张牌之间的间隔
+     * @param side @see Side Side.PREV: 上家  Side.NEXT: 下家
+     * @param g Graphics对象
+     */
+    private void paintSideCards(List<Card> cardList, int cap, Side side, Graphics g){
+        int startX = 0;
+        int startY = this.sideStartY;
+        if(side == Side.PREV){
+            startX = this.leftSideStartX;
+        }else if(side == Side.NEXT){
+            startX = this.rightSideStartX;
+        }
+        for(int i=0; i<cardList.size(); i++){
+            Card card = cardList.get(i);
+            Image cardImage = card.getImage();
+            System.out.println(startX + "," + (startY + i * cap) + "," + (startX + this.cardWidth) + "," + (startY + i * cap + this.cardHeight));
+            g.drawImage(cardImage, startX, startY + i * cap, startX + this.cardWidth, startY + i * cap + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
+        }
     }
 
     /**
