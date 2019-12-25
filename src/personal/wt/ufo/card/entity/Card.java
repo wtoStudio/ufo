@@ -11,6 +11,7 @@ import java.awt.*;
 @Setter
 @Getter
 public class Card{
+
     private PictureType pictureType;
 
     private String v;

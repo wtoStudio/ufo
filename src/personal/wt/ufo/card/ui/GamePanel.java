@@ -12,7 +12,9 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * @author ttb
+ */
 public class GamePanel extends JPanel {
     /**
      * 游戏画面宽度
@@ -99,7 +101,7 @@ public class GamePanel extends JPanel {
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
                 int button = e.getButton();//1: 鼠标左键  3：鼠标右键
-                if(button == 1){ //选派（反选牌）
+                if(button == MouseEvent.BUTTON1){ //选派（反选牌）
                     int index = getCardIndex(e.getPoint());
                     if(index > -1){
                         //调整计算误差
@@ -109,8 +111,9 @@ public class GamePanel extends JPanel {
                         boolean selected = GamePanel.this.cardList.get(index).isSelected();
                         GamePanel.this.cardList.get(index).setSelected(!selected);
                     }
-                }else if(button == 3){ //出牌
-                    List<Card> selectedCards = GamePanel.this.cardList.stream().filter(card -> card.isSelected()).collect(Collectors.toList());
+                }else if(button == MouseEvent.BUTTON3){ //出牌
+                    List<Card> selectedCards = GamePanel.this.cardList.stream().filter(Card::isSelected).collect(Collectors.toList());
+                    selectedCards.forEach(card -> card.setSelected(false));
                     GamePanel.this.currentPlayedCardList.clear();
                     GamePanel.this.currentPlayedCardList.addAll(selectedCards);
                     GamePanel.this.cardList.removeAll(selectedCards);
@@ -245,38 +248,34 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         paintBackground(g);
-        paintCards(g);
-        paintCurrentPlayedCards(g);
+        paintCards(this.cardList, this.cardStartPosX, this.cardStartPosY, g);
+        paintCards(this.currentPlayedCardList, this.currentPlayedCardStartX, this.currentPlayedCardStartY, g);
     }
 
+    /**
+     * 绘制背景图
+     */
     private void paintBackground(Graphics g){
         g.drawImage(bg, 0, 0, this.width, this.height, 0, 0, bg.getWidth(null), bg.getHeight(null), null);
     }
 
     /**
-     * 绘制玩家手中的牌
+     * 绘制一组牌
+     * @param cardList 要绘制的一组牌的集合
+     * @param startX 开始位置x坐标
+     * @param startY 开始位置y坐标
+     * @param g Graphics对象
      */
-    private void paintCards(Graphics g){
+    private void paintCards(List<Card> cardList, int startX, int startY, Graphics g){
         for(int i=0; i<cardList.size(); i++){
             Card card = cardList.get(i);
             boolean selected = card.isSelected();
             Image cardImage = card.getImage();
             if(selected){
-                g.drawImage(cardImage, this.cardStartPosX + (i * this.cardWidth / 2), this.cardStartPosY - 30, this.cardStartPosX + (i * this.cardWidth / 2) + this.cardWidth, this.cardStartPosY - 30 + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
+                g.drawImage(cardImage, startX + (i * this.cardWidth / 2), startY - 30, startX + (i * this.cardWidth / 2) + this.cardWidth, startY - 30 + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
             }else{
-                g.drawImage(cardImage, this.cardStartPosX + (i * this.cardWidth / 2), this.cardStartPosY, this.cardStartPosX + (i * this.cardWidth / 2) + this.cardWidth, this.cardStartPosY + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
+                g.drawImage(cardImage, startX + (i * this.cardWidth / 2), startY, startX + (i * this.cardWidth / 2) + this.cardWidth, startY + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
             }
-        }
-    }
-
-    /**
-     * 绘制玩家当前打出的牌
-     */
-    private void paintCurrentPlayedCards(Graphics g){
-        for(int i=0; i<currentPlayedCardList.size(); i++){
-            Card card = currentPlayedCardList.get(i);
-            Image cardImage = card.getImage();
-            g.drawImage(cardImage, this.currentPlayedCardStartX + (i * this.cardWidth / 2), this.currentPlayedCardStartY, this.currentPlayedCardStartX + (i * this.cardWidth / 2) + this.cardWidth, this.currentPlayedCardStartY + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
         }
     }
 
