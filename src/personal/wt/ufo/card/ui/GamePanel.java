@@ -191,7 +191,7 @@ public class GamePanel extends JPanel {
         PictureType[] pictureTypes = PictureType.values();
         String[] values = new String[]{"A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"};
         for(PictureType pictureType : pictureTypes){
-            if("JOKER".equals(pictureType.getCode())){
+            if(pictureType.getCode().startsWith("JOKER")){
                 continue;
             }
             for(String v : values){
