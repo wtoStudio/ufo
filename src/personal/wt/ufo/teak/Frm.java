@@ -3,11 +3,14 @@ package personal.wt.ufo.teak;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * @author ttb
+ */
 public class Frm extends JFrame {
     private Pan pan = new Pan();
     private Timer timer;
     public Frm(){
-        this.setTitle("tea");
+        this.setTitle("Tea");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.add(pan, BorderLayout.CENTER);
         this.setVisible(true);
