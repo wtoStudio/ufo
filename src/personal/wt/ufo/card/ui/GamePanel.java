@@ -126,6 +126,7 @@ public class GamePanel extends JPanel {
         redealCardBtn.addActionListener(e -> {
             GamePanel.this.cardList.clear();
             dealCard(17);
+            calCardStartPosXY();
             GamePanel.this.repaint();
         });
     }
