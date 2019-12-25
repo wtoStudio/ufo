@@ -100,7 +100,7 @@ public class GamePanel extends JPanel {
                 super.mouseClicked(e);
                 int button = e.getButton();//1: 鼠标左键  3：鼠标右键
                 if(button == 1){ //选派（反选牌）
-                    int index = getCard(e.getPoint());
+                    int index = getCardIndex(e.getPoint());
                     if(index > -1){
                         //调整计算误差
                         if(index == GamePanel.this.cardList.size()){
@@ -224,7 +224,7 @@ public class GamePanel extends JPanel {
     /**
      * 根据鼠标点击位置，返回指定的牌的index
      */
-    private int getCard(Point point){
+    private int getCardIndex(Point point){
         if(this.cardList.isEmpty()){
             return -1;
         }
@@ -234,7 +234,6 @@ public class GamePanel extends JPanel {
             clickedX<(this.cardStartPosX + (this.cardList.size()-1)*(this.cardWidth/2)+this.cardWidth)){
             if(clickedY>this.cardStartPosY && clickedY<this.cardStartPosY+this.cardHeight){
                 int index = (clickedX - this.cardStartPosX) / (this.cardWidth / 2);
-                System.out.println("index: " + index);
                 return index;
             }
         }
@@ -270,7 +269,7 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * 绘制玩家当前已打出的牌
+     * 绘制玩家当前打出的牌
      */
     private void paintCurrentPlayedCards(Graphics g){
         for(int i=0; i<currentPlayedCardList.size(); i++){
@@ -286,17 +285,23 @@ public class GamePanel extends JPanel {
      */
     private void judgeCardType(List<Card> cards){
         int count = cards.size();
-        if(count == 1){ //单张
+        if(count == 1){
+            //单张
 
-        }else if(count == 2){ //对子或王炸qazxcswAZWa
+        }else if(count == 2){
+            //对子或王炸qazxcswAZWa
 
-        }else if(count == 3){ //三不带
+        }else if(count == 3){
+            //三不带
 
-        }else if(count == 4){ //炸弹 或 三带一
+        }else if(count == 4){
+            //炸弹 或 三带一
 
-        }else if(count == 5){ //顺子 或者三带二
+        }else if(count == 5){
+            //顺子 或者三带二
 
-        }else if(count == 6){ //顺子 或者 连队 或者 四带二 或者 飞机
+        }else if(count == 6){
+            //顺子 或者 连队 或者 四带二 或者 飞机
 
         }
     }

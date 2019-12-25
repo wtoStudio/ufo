@@ -1,8 +1,16 @@
 package personal.wt.ufo.card.ui;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * @author ttb
+ */
+@Setter
+@Getter
 public class MainFrame extends JFrame {
 
     private GamePanel gamePanel = new GamePanel();
@@ -15,13 +23,5 @@ public class MainFrame extends JFrame {
         this.pack();
         this.setVisible(true);
         this.setResizable(true);
-    }
-
-    public GamePanel getGamePanel() {
-        return gamePanel;
-    }
-
-    public void setGamePanel(GamePanel gamePanel) {
-        this.gamePanel = gamePanel;
     }
 }
