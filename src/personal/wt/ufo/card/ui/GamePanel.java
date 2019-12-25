@@ -372,7 +372,6 @@ public class GamePanel extends JPanel {
         for(int i=0; i<cardList.size(); i++){
             Card card = cardList.get(i);
             Image cardImage = card.getImage();
-            System.out.println(startX + "," + (startY + i * cap) + "," + (startX + this.cardWidth) + "," + (startY + i * cap + this.cardHeight));
             g.drawImage(cardImage, startX, startY + i * cap, startX + this.cardWidth, startY + i * cap + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
         }
     }
