@@ -47,37 +47,37 @@ public class GamePanel extends JPanel {
     private List<Card> allCardList = new ArrayList<>();
 
     /**
-     * 已发的牌开始显示位置X坐标
+     * 本家的牌开始显示位置X坐标
      */
-    private int cardStartPosX;
+    private int myCardStartPosX;
 
     /**
-     * 已发的牌开始显示位置Y坐标
+     * 本家的牌开始显示位置Y坐标
      */
-    private int cardStartPosY;
+    private int myCardStartPosY;
 
     /**
-     * 存放当前玩家的牌
+     * 存放本家的牌
      */
     private List<Card> myCardList = new ArrayList<>();
 
     /**
-     *
+     * 本家的牌的间隔宽度
      */
     private int myCardCap;
 
     /**
-     *
+     * 本家打出的牌的间隔宽度
      */
     private int myPlayedCardCap;
 
     /**
-     * 玩家当前出的牌开始显示位置Y坐标
+     * 本家打出的牌开始显示位置Y坐标
      */
-    private int currentPlayedCardStartY;
+    private int myPlayedCardStartY;
 
     /**
-     * 存放玩家当前打出的牌
+     * 存放本家当前打出的牌
      */
     private List<Card> myPlayedCardList = new ArrayList<>();
 
@@ -165,7 +165,7 @@ public class GamePanel extends JPanel {
     }
 
     /**
-     * 初始化界面大小
+     * 初始各种尺寸数值
      */
     private void initSize(){
         this.width = (int) (Util.getScreenSize().width * 0.8);
@@ -178,8 +178,8 @@ public class GamePanel extends JPanel {
         this.myCardCap = this.cardWidth / 2;
         this.myPlayedCardCap = this.cardWidth / 2;
 
-        this.cardStartPosY = this.height - (this.cardHeight + 30);
-        this.currentPlayedCardStartY = this.cardStartPosY - (this.cardHeight + 30);
+        this.myCardStartPosY = this.height - (this.cardHeight + 30);
+        this.myPlayedCardStartY = this.myCardStartPosY - (this.cardHeight + 30);
         this.hiddenCardStartY = 80;
     }
 
@@ -280,13 +280,13 @@ public class GamePanel extends JPanel {
         if(this.myCardList.isEmpty()){
             return -1;
         }
-        this.cardStartPosX = calStartX(this.myCardList.size(), this.cardWidth/2);
+        this.myCardStartPosX = calStartX(this.myCardList.size(), this.cardWidth/2);
         int clickedX = point.x;
         int clickedY = point.y;
-        if(clickedX>this.cardStartPosX &&
-            clickedX<(this.cardStartPosX + (this.myCardList.size()-1)*(this.cardWidth/2)+this.cardWidth)){
-            if(clickedY>this.cardStartPosY && clickedY<this.cardStartPosY+this.cardHeight){
-                int index = (clickedX - this.cardStartPosX) / (this.cardWidth / 2);
+        if(clickedX>this.myCardStartPosX &&
+            clickedX<(this.myCardStartPosX + (this.myCardList.size()-1)*(this.cardWidth/2)+this.cardWidth)){
+            if(clickedY>this.myCardStartPosY && clickedY<this.myCardStartPosY +this.cardHeight){
+                int index = (clickedX - this.myCardStartPosX) / (this.cardWidth / 2);
                 return index;
             }
         }
@@ -300,9 +300,9 @@ public class GamePanel extends JPanel {
         //绘制底牌
         paintCards(this.hiddenCardList, this.hiddenCardCap, this.hiddenCardStartY, g);//this.cardWidth + 30
         //绘制本家的牌
-        paintCards(this.myCardList, this.myCardCap, this.cardStartPosY, g);//this.cardWidth/2
+        paintCards(this.myCardList, this.myCardCap, this.myCardStartPosY, g);//this.cardWidth/2
         //绘制本家已打出的牌
-        paintCards(this.myPlayedCardList, this.myPlayedCardCap, this.currentPlayedCardStartY, g);//this.cardWidth/2
+        paintCards(this.myPlayedCardList, this.myPlayedCardCap, this.myPlayedCardStartY, g);//this.cardWidth/2
     }
 
     /**
