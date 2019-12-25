@@ -1,10 +1,9 @@
 package personal.wt.ufo.card.entity;
 
 import personal.wt.ufo.card.enums.PictureType;
-
 import java.awt.*;
 
-public class Card {
+public class Card{
     private PictureType pictureType;
 
     private String v;
@@ -14,6 +13,8 @@ public class Card {
     private Image image;
 
     private int sortValue;
+
+    public Card(){}
 
     public Card(PictureType pictureType, String v){
         this.pictureType = pictureType;

@@ -1,5 +1,6 @@
 package personal.wt.ufo.card.ui;
 
+import org.springframework.beans.BeanUtils;
 import personal.wt.ufo.card.entity.Card;
 import personal.wt.ufo.card.enums.PictureType;
 import personal.wt.ufo.card.util.Util;
@@ -212,9 +213,12 @@ public class GamePanel extends JPanel {
             set.add(i);
         }
         set.forEach(i -> {
-            this.cardList.add(this.allCardList.get(i));
+            Card card = this.allCardList.get(i);
+            Card c = new Card();
+            BeanUtils.copyProperties(card, c);
+            this.cardList.add(c);
         });
-        this.cardList.sort((card1,card2)-> card2.getSortValue() - card1.getSortValue());
+        this.cardList.sort((card1,card2) -> card2.getSortValue() - card1.getSortValue());
     }
 
     /**
