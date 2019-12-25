@@ -42,6 +42,11 @@ public class GamePanel extends JPanel {
     private int cardHeight;
 
     /**
+     * 容纳所有54张扑克牌的集合
+     */
+    private List<Card> allCardList = new ArrayList<>();
+
+    /**
      * 已发的牌开始显示位置X坐标
      */
     private int cardStartPosX;
@@ -52,19 +57,19 @@ public class GamePanel extends JPanel {
     private int cardStartPosY;
 
     /**
-     * 容纳所有54张扑克牌的集合
+     * 存放当前玩家的牌
      */
-    private List<Card> allCardList = new ArrayList<>();
+    private List<Card> myCardList = new ArrayList<>();
 
     /**
-     * 存放玩家当前有的牌
+     *
      */
-    private List<Card> cardList = new ArrayList<>();
+    private int myCardCap;
 
     /**
-     * 玩家当前出的牌开始显示位置X坐标
+     *
      */
-    private int currentPlayedCardStartX;
+    private int myPlayedCardCap;
 
     /**
      * 玩家当前出的牌开始显示位置Y坐标
@@ -74,7 +79,32 @@ public class GamePanel extends JPanel {
     /**
      * 存放玩家当前打出的牌
      */
-    private List<Card> currentPlayedCardList = new ArrayList<>();
+    private List<Card> myPlayedCardList = new ArrayList<>();
+
+    /**
+     * 存放上家的牌
+     */
+    private List<Card> prevCardList = new ArrayList<>();
+
+    /**
+     * 存放下家的牌
+     */
+    private List<Card> nextCardList = new ArrayList<>();
+
+    /**
+     * 存放底牌
+     */
+    private List<Card> hiddenCardList = new ArrayList<>();
+
+    /**
+     * 底牌开始显示位置X坐标
+     */
+    private int hiddenCardCap;
+
+    /**
+     * 底牌开始显示位置Y坐标
+     */
+    private int hiddenCardStartY;
 
     private Map<String, Image> imageMap = new HashMap<>();
 
@@ -92,7 +122,7 @@ public class GamePanel extends JPanel {
     public GamePanel(){
         initImageMap();
         initCards();
-        dealCard(17);
+        dealCard();
         initSize();
         this.bg = new ImageIcon(Util.getProjectDir() + "/images/card/background/bg2.jpg").getImage();
         this.setPreferredSize(new Dimension(this.width, this.height));
@@ -105,20 +135,18 @@ public class GamePanel extends JPanel {
                     int index = getCardIndex(e.getPoint());
                     if(index > -1){
                         //调整计算误差
-                        if(index == GamePanel.this.cardList.size()){
-                            index = GamePanel.this.cardList.size() - 1;
+                        if(index == GamePanel.this.myCardList.size()){
+                            index = GamePanel.this.myCardList.size() - 1;
                         }
-                        boolean selected = GamePanel.this.cardList.get(index).isSelected();
-                        GamePanel.this.cardList.get(index).setSelected(!selected);
+                        boolean selected = GamePanel.this.myCardList.get(index).isSelected();
+                        GamePanel.this.myCardList.get(index).setSelected(!selected);
                     }
                 }else if(button == MouseEvent.BUTTON3){ //出牌
-                    List<Card> selectedCards = GamePanel.this.cardList.stream().filter(Card::isSelected).collect(Collectors.toList());
+                    List<Card> selectedCards = GamePanel.this.myCardList.stream().filter(Card::isSelected).collect(Collectors.toList());
                     selectedCards.forEach(card -> card.setSelected(false));
-                    GamePanel.this.currentPlayedCardList.clear();
-                    GamePanel.this.currentPlayedCardList.addAll(selectedCards);
-                    GamePanel.this.cardList.removeAll(selectedCards);
-                    calCurrentPlayedCardStartPosXY();
-                    calCardStartPosXY();
+                    GamePanel.this.myPlayedCardList.clear();
+                    GamePanel.this.myPlayedCardList.addAll(selectedCards);
+                    GamePanel.this.myCardList.removeAll(selectedCards);
                 }
                 GamePanel.this.repaint();
             }
@@ -127,9 +155,11 @@ public class GamePanel extends JPanel {
         this.add(redealCardBtn);
         redealCardBtn.setFocusPainted(false);
         redealCardBtn.addActionListener(e -> {
-            GamePanel.this.cardList.clear();
-            dealCard(17);
-            calCardStartPosXY();
+            GamePanel.this.myCardList.clear();
+            GamePanel.this.prevCardList.clear();
+            GamePanel.this.nextCardList.clear();
+            GamePanel.this.hiddenCardList.clear();
+            dealCard();
             GamePanel.this.repaint();
         });
     }
@@ -143,24 +173,18 @@ public class GamePanel extends JPanel {
 
         this.cardWidth = this.width / 25;
         this.cardHeight = (int) (this.cardWidth * 1.5);
-        calCardStartPosXY();
-        calCurrentPlayedCardStartPosXY();
-    }
 
-    /**
-     * 计算发给用户的牌的显示位置
-     */
-    private void calCardStartPosXY(){
-        this.cardStartPosX = (this.width - ((this.cardList.size()-1) * (this.cardWidth / 2) + this.cardWidth)) / 2;
+        this.hiddenCardCap = this.cardWidth + 30;
+        this.myCardCap = this.cardWidth / 2;
+        this.myPlayedCardCap = this.cardWidth / 2;
+
         this.cardStartPosY = this.height - (this.cardHeight + 30);
+        this.currentPlayedCardStartY = this.cardStartPosY - (this.cardHeight + 30);
+        this.hiddenCardStartY = 80;
     }
 
-    /**
-     * 计算发给用户的牌的显示位置
-     */
-    private void calCurrentPlayedCardStartPosXY(){
-        this.currentPlayedCardStartX = (this.width - ((this.currentPlayedCardList.size()-1) * (this.cardWidth / 2) + this.cardWidth)) / 2;
-        this.currentPlayedCardStartY = this.cardStartPosY - (this.cardHeight + 30);
+    private int calStartX(int count, int cap){
+        return (this.width - ((count - 1) * cap + this.cardWidth)) / 2;
     }
 
     private void initImageMap(){
@@ -186,7 +210,7 @@ public class GamePanel extends JPanel {
         PictureType[] pictureTypes = PictureType.values();
         String[] values = new String[]{"A", "K", "Q", "J", "10", "9", "8", "7", "6", "5", "4", "3", "2"};
         for(PictureType pictureType : pictureTypes){
-            if("JOKER".equals(pictureType.getCode())){
+            if(pictureType.getCode().startsWith("JOKER")){
                 continue;
             }
             for(String v : values){
@@ -196,10 +220,10 @@ public class GamePanel extends JPanel {
                 allCardList.add(card);
             }
         }
-        Card joker0 = new Card(null, "0");
+        Card joker0 = new Card(PictureType.JOKER0, "0");
         joker0.setImage(imageMap.get("JOKER0"));
         joker0.setSortValue(9000001);
-        Card joker1 = new Card(null, "1");
+        Card joker1 = new Card(PictureType.JOKER1, "1");
         joker1.setImage(imageMap.get("JOKER1"));
         joker1.setSortValue(9000002);
         allCardList.add(joker0);
@@ -209,33 +233,58 @@ public class GamePanel extends JPanel {
     /**
      * 发牌
      */
-    private void dealCard(int count){
+    private void dealCard(){
         Random random = new Random();
-        Set<Integer> set = new HashSet<>();
-        while(set.size()<count){
-            int i = random.nextInt(allCardList.size());
-            set.add(i);
-        }
-        set.forEach(i -> {
-            Card card = this.allCardList.get(i);
-            Card c = new Card();
-            BeanUtils.copyProperties(card, c);
-            this.cardList.add(c);
+        List<Card> tempList = new ArrayList<>();
+        this.allCardList.forEach(c -> {
+            Card card = new Card();
+            BeanUtils.copyProperties(c, card);
+            tempList.add(card);
         });
-        this.cardList.sort((card1,card2) -> card2.getSortValue() - card1.getSortValue());
+        Set<Integer> set1 = new HashSet<>();
+        Set<Integer> set2 = new HashSet<>();
+        Set<Integer> set3 = new HashSet<>();
+        while(set1.size() < 17){
+            int index = random.nextInt(tempList.size());
+            if(set1.add(index)){
+                this.myCardList.add(tempList.get(index));
+                tempList.remove(index);
+            }
+        }
+        while(set2.size() < 17){
+            int index = random.nextInt(tempList.size());
+            if(set2.add(index)){
+                this.prevCardList.add(tempList.get(index));
+                tempList.remove(index);
+            }
+        }
+        while(set3.size() < 3){
+            int index = random.nextInt(tempList.size());
+            if(set3.add(index)){
+                this.hiddenCardList.add(tempList.get(index));
+                tempList.remove(index);
+            }
+        }
+        this.nextCardList = tempList;
+
+        //对三家牌进行排序，底牌不用排序
+        this.prevCardList.sort((card1, card2) -> card2.getSortValue() - card1.getSortValue());
+        this.myCardList.sort((card1, card2) -> card2.getSortValue() - card1.getSortValue());
+        this.nextCardList.sort((card1, card2) -> card2.getSortValue() - card1.getSortValue());
     }
 
     /**
      * 根据鼠标点击位置，返回指定的牌的index
      */
     private int getCardIndex(Point point){
-        if(this.cardList.isEmpty()){
+        if(this.myCardList.isEmpty()){
             return -1;
         }
+        this.cardStartPosX = calStartX(this.myCardList.size(), this.cardWidth/2);
         int clickedX = point.x;
         int clickedY = point.y;
         if(clickedX>this.cardStartPosX &&
-            clickedX<(this.cardStartPosX + (this.cardList.size()-1)*(this.cardWidth/2)+this.cardWidth)){
+            clickedX<(this.cardStartPosX + (this.myCardList.size()-1)*(this.cardWidth/2)+this.cardWidth)){
             if(clickedY>this.cardStartPosY && clickedY<this.cardStartPosY+this.cardHeight){
                 int index = (clickedX - this.cardStartPosX) / (this.cardWidth / 2);
                 return index;
@@ -248,8 +297,12 @@ public class GamePanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         paintBackground(g);
-        paintCards(this.cardList, this.cardStartPosX, this.cardStartPosY, g);
-        paintCards(this.currentPlayedCardList, this.currentPlayedCardStartX, this.currentPlayedCardStartY, g);
+        //绘制底牌
+        paintCards(this.hiddenCardList, this.hiddenCardCap, this.hiddenCardStartY, g);//this.cardWidth + 30
+        //绘制本家的牌
+        paintCards(this.myCardList, this.myCardCap, this.cardStartPosY, g);//this.cardWidth/2
+        //绘制本家已打出的牌
+        paintCards(this.myPlayedCardList, this.myPlayedCardCap, this.currentPlayedCardStartY, g);//this.cardWidth/2
     }
 
     /**
@@ -262,19 +315,20 @@ public class GamePanel extends JPanel {
     /**
      * 绘制一组牌
      * @param cardList 要绘制的一组牌的集合
-     * @param startX 开始位置x坐标
+     * @param cap 相邻两张牌之间的间距
      * @param startY 开始位置y坐标
      * @param g Graphics对象
      */
-    private void paintCards(List<Card> cardList, int startX, int startY, Graphics g){
+    private void paintCards(List<Card> cardList, int cap, int startY, Graphics g){
+        int startX = calStartX(cardList.size(), cap);
         for(int i=0; i<cardList.size(); i++){
             Card card = cardList.get(i);
             boolean selected = card.isSelected();
             Image cardImage = card.getImage();
             if(selected){
-                g.drawImage(cardImage, startX + (i * this.cardWidth / 2), startY - 30, startX + (i * this.cardWidth / 2) + this.cardWidth, startY - 30 + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
+                g.drawImage(cardImage, startX + (i * cap), startY - 30, startX + (i * cap) + this.cardWidth, startY - 30 + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
             }else{
-                g.drawImage(cardImage, startX + (i * this.cardWidth / 2), startY, startX + (i * this.cardWidth / 2) + this.cardWidth, startY + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
+                g.drawImage(cardImage, startX + (i * cap), startY, startX + (i * cap) + this.cardWidth, startY + this.cardHeight, 0, 0, cardImage.getWidth(null), cardImage.getHeight(null), null);
             }
         }
     }

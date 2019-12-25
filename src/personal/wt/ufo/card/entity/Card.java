@@ -28,4 +28,9 @@ public class Card{
         this.pictureType = pictureType;
         this.v = v;
     }
+
+    @Override
+    public String toString() {
+        return this.pictureType.getDesc() + "-" + this.v;
+    }
 }
