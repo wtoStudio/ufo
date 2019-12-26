@@ -335,11 +335,11 @@ public class GamePanel extends JPanel {
         super.paintComponent(g);
         paintBackground(g);
         //绘制底牌
-        paintCards(this.hiddenCardList, this.hiddenCardCap, this.hiddenCardStartY, g);//this.cardWidth + 30
+        paintCards(this.hiddenCardList, this.hiddenCardCap, this.hiddenCardStartY, g);
         //绘制本家的牌
-        paintCards(this.myCardList, this.myCardCap, this.myCardStartPosY, g);//this.cardWidth/2
+        paintCards(this.myCardList, this.myCardCap, this.myCardStartPosY, g);
         //绘制本家已打出的牌
-        paintCards(this.myPlayedCardList, this.myPlayedCardCap, this.myPlayedCardStartY, g);//this.cardWidth/2
+        paintCards(this.myPlayedCardList, this.myPlayedCardCap, this.myPlayedCardStartY, g);
 
         //绘制上家的牌
         paintSideCards(prevCardList, this.sideCardCap, Side.PREV, g);
