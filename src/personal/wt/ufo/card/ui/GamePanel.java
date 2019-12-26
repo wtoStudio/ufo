@@ -333,6 +333,7 @@ public class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        //绘制背景图
         paintBackground(g);
         //绘制底牌
         paintCards(this.hiddenCardList, this.hiddenCardCap, this.hiddenCardStartY, g);
