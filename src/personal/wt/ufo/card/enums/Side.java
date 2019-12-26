@@ -1,5 +1,17 @@
 package personal.wt.ufo.card.enums;
 
+/**
+ * @author ttb
+ */
+
 public enum Side {
-    PREV, NEXT;
+    /**
+     * 上家
+     */
+    PREV,
+
+    /**
+     * 下家
+     */
+    NEXT;
 }

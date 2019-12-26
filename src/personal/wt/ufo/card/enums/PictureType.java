@@ -2,28 +2,23 @@ package personal.wt.ufo.card.enums;
 
 import lombok.Getter;
 /**
+ * 表示扑克牌中的几种花色
  * @author ttb
  */
 @Getter
 public enum PictureType {
-    /**
-     * 表示几种花色
-     */
-    HX(1000000, "HX", "红心"),
-    FP(10000, "FP", "方片"),
-    HT(100, "HT", "黑桃"),
-    MH(1, "MH", "梅花"),
-    JOKER0(null, "JOKER0", "小王"),
-    JOKER1(null, "JOKER1", "大王");
+    HX("HX", "红心"),
+    FP("FP", "方片"),
+    HT("HT", "黑桃"),
+    MH("MH", "梅花"),
+    JOKER0("JOKER0", "小王"),
+    JOKER1("JOKER1", "大王");
 
     String code;
 
     String desc;
 
-    Integer sortValue;
-
-    PictureType(Integer sortValue, String code, String desc){
-        this.sortValue = sortValue;
+    PictureType(String code, String desc){
         this.code = code;
         this.desc = desc;
     }
