@@ -217,7 +217,7 @@ public class GamePanel extends JPanel {
         this.leftSideStartX = this.sideCap;
         this.rightSideStartX = this.width - (this.cardWidth + this.sideCap);
         this.sideStartY = 80;
-        this.sideCardCap = this.cardHeight * 1 / 3;
+        this.sideCardCap = this.cardHeight * 2 / 5;
     }
 
     private int calStartX(int count, int cap){
@@ -333,6 +333,7 @@ public class GamePanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        //绘制背景图
         paintBackground(g);
         //绘制底牌
         paintCards(this.hiddenCardList, this.hiddenCardCap, this.hiddenCardStartY, g);
