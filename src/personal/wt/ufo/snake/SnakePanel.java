@@ -23,7 +23,9 @@ public class SnakePanel extends JPanel {
 
     private Point food;
 
-    private Image foodImage = new ImageIcon("E:\\ideaworkspace\\Java\\ufo\\images\\snakes\\apple.png").getImage();
+    private static final String PROJECT_DIR = System.getProperty("user.dir");
+
+    private Image foodImage = new ImageIcon(PROJECT_DIR + "\\images\\snakes\\apple.png").getImage();
 
     private Random random = new Random();
 
@@ -57,15 +59,15 @@ public class SnakePanel extends JPanel {
     }
 
     private void initIconMap(){
-        headIconMap.put(Direction.UP, new ImageIcon("E:\\ideaworkspace\\Java\\ufo\\images\\snakes\\headup.png").getImage());
-        headIconMap.put(Direction.DOWN, new ImageIcon("E:\\ideaworkspace\\Java\\ufo\\images\\snakes\\headdown.png").getImage());
-        headIconMap.put(Direction.LEFT, new ImageIcon("E:\\ideaworkspace\\Java\\ufo\\images\\snakes\\headleft.png").getImage());
-        headIconMap.put(Direction.RIGHT, new ImageIcon("E:\\ideaworkspace\\Java\\ufo\\images\\snakes\\headright.png").getImage());
+        headIconMap.put(Direction.UP, new ImageIcon(PROJECT_DIR + "\\images\\snakes\\headup.png").getImage());
+        headIconMap.put(Direction.DOWN, new ImageIcon(PROJECT_DIR + "\\images\\snakes\\headdown.png").getImage());
+        headIconMap.put(Direction.LEFT, new ImageIcon(PROJECT_DIR + "\\images\\snakes\\headleft.png").getImage());
+        headIconMap.put(Direction.RIGHT, new ImageIcon(PROJECT_DIR + "\\images\\snakes\\headright.png").getImage());
 
-        bodyIconMap.put(Direction.UP, new ImageIcon("E:\\ideaworkspace\\Java\\ufo\\images\\snakes\\vbody.png").getImage());
-        bodyIconMap.put(Direction.DOWN, new ImageIcon("E:\\ideaworkspace\\Java\\ufo\\images\\snakes\\vbody.png").getImage());
-        bodyIconMap.put(Direction.LEFT, new ImageIcon("E:\\ideaworkspace\\Java\\ufo\\images\\snakes\\hbody.png").getImage());
-        bodyIconMap.put(Direction.RIGHT, new ImageIcon("E:\\ideaworkspace\\Java\\ufo\\images\\snakes\\hbody.png").getImage());
+        bodyIconMap.put(Direction.UP, new ImageIcon(PROJECT_DIR + "\\images\\snakes\\vbody.png").getImage());
+        bodyIconMap.put(Direction.DOWN, new ImageIcon(PROJECT_DIR + "\\images\\snakes\\vbody.png").getImage());
+        bodyIconMap.put(Direction.LEFT, new ImageIcon(PROJECT_DIR + "\\images\\snakes\\hbody.png").getImage());
+        bodyIconMap.put(Direction.RIGHT, new ImageIcon(PROJECT_DIR + "\\images\\snakes\\hbody.png").getImage());
     }
 
     private void initGrid(Graphics g){
